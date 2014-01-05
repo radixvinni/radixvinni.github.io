@@ -1,0 +1,48 @@
+@media screen, projection {
+    html, body {
+        /*font-family: constantia, palatino, times new roman;*/
+        background: #eee;
+        margin: 0;
+        padding: 0;
+    }
+    h1 {
+        margin: 0;
+        padding: 0;
+    }
+    
+    a {
+        color: #666666;
+        border-bottom:1px dotted #c0c0c0;
+        font-weight: bold;
+	  }
+	  
+    a:hover {
+        color: #c0c0c0;
+        border-bottom:1px dotted #c0c0c0;
+    }
+
+	  .Section1 {
+		    background:#fff;
+		    border:1px solid #ccc;
+		    margin: 3em auto;
+		    padding:25px 45px;
+		    position:relative;
+		    width:700px;
+	  }
+	  
+	  
+}
+
+
+@media print {
+    html, body {
+        background: none;
+    }
+    .Section1 {
+        width: auto;
+        margin: 0;
+        border: none;
+        background: none;
+    }
+}
+

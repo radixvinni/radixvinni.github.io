@@ -1,0 +1,15 @@
+AddDefaultCharset windows-1251
+
+DirectoryIndex part1.htm
+
+Options -Indexes
+
+SetEnvIf Request_URI \.gif$ access_log
+SetEnvIf Request_URI \.jpg$ access_log
+SetEnvIf Request_URI \.png$ access_log
+
+ErrorDocument 400 /403.shtml
+ErrorDocument 401 /403.shtml
+ErrorDocument 403 /403.shtml
+ErrorDocument 404 /404.shtml
+ErrorDocument 500 /500.shtml

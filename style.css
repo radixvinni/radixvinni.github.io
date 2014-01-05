@@ -50,3 +50,19 @@ p,li{font-size:small;}
     center,i,h3,#top,.nav{display:none;}
     a{color:#666666;}  
 }
+
+
+#forkme_banner {
+    background: url("blacktocat.png") no-repeat scroll 95% 50% #0090FF;
+    border-bottom-left-radius: 2px;
+    border-bottom-right-radius: 2px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    color: #FFFFFF;
+    display: block;
+    font-weight: 700;
+    padding: 10px 50px 10px 10px;
+    position: absolute;
+    right: 10px;
+    top: 0;
+    z-index: 10;
+}

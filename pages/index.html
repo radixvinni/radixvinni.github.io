@@ -1,0 +1,189 @@
+<template>
+  <div class="page">
+    <!-- Top Navbar -->
+    <div class="navbar">
+      <div class="navbar-bg"></div>
+      <div class="navbar-inner">
+        <div class="title">
+          <i class="icon icon-only"><img width="32" height="32" src="assets/icons/128x128.png"> </i>
+          Программа для вычисления параметров торта
+        </div>
+      </div>
+    </div>
+    <!-- Scrollable page content-->
+    <div class="page-content">
+      <div id="dt" class="data-table data-table-init card">
+        <!-- Card header -->
+        <div class="card-header">
+          <!-- Default table header -->
+          <div class="data-table-header">
+            <!-- Default table title -->
+            <div class="data-table-title">Масса торта <input class="text-align-right mass display-inline"
+                @change="update" type="number" value="{{mass}}"> г.</div>
+            <!-- Default table actions -->
+
+          </div>
+          <!-- Selected table header -->
+          <div class="data-table-header-selected">
+            <!-- Selected table title -->
+            <div class="data-table-title-selected"><span class="data-table-selected-count"></span> слоёв выбрано
+            </div>
+            <!-- Selected table actions -->
+            <div class="data-table-actions">
+              <a class="link icon-only" @click="deleteSelected">
+                <i class="icon"><img src="assets/icons/trash.png"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="card-content">
+          <table>
+            <thead>
+              <tr>
+                <th class="checkbox-cell">
+                  <label class="checkbox">
+                    <input type="checkbox">
+                    <i class="icon-checkbox"></i>
+                  </label>
+                </th>
+                <th class="label-cell"><a class="link" @click="addSlice">Добавить слой</a></th>
+                <th class="numeric-cell">Диаметр, см</th>
+                <th class="numeric-cell">Плотность, %</th>
+                <th class="numeric-cell">Масса, г</th>
+              </tr>
+            </thead>
+            <tbody>
+              {{#each slice}}
+              <tr id="{{id}}" class="row{{id}}">
+                <td class="checkbox-cell">
+                  <label class="checkbox">
+                    <input type="checkbox" id="layer{{id}}">
+                    <i class="icon-checkbox"></i>
+                  </label>
+                </td>
+                <td class="label-cell"><label for="layer{{id}}">слой {{id}}</label></td>
+                <td class="numeric-cell"><input class="text-align-right diam float-right" @change="update" type="number"
+                    step="2" value="{{diam}}">
+                </td>
+                <td class="numeric-cell"><input class="text-align-right dens float-right" @change="update" type="number"
+                    min="0" max="100" value="{{dens}}"></td>
+                <td class="numeric-cell mass-cell">{{mass}}</td>
+                <td class="actions-cell">
+                  <a class="link icon-only" @click="deleteSlice">
+                    <i class="icon"><img src="assets/icons/trash.png"></i>
+                  </a>
+                </td>
+              </tr>
+              {{/each}}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="block-header"></div>
+      <div class="card">
+        <div class="card-header">
+          <div class="display-block">Высота слоёв <b>{{height}}</b> см</div>
+        </div>
+
+        <div class="card-header">
+          <div class="display-block">Неиспользованной массы <b>{{unused}}</b> г</div>
+        </div>
+      </div>
+      <div class="block-header"></div>
+      <div class="list accordion-list">
+        <ul>
+          <li class="accordion-item">
+            <a href="#" class="item-content item-link">
+              <div class="item-inner">
+                <div class="item-title">О программе</div>
+              </div>
+            </a>
+            <div class="accordion-item-content">
+              <div class="block block-strong inset">
+                <p>Программа предназначена для кондитеров, изготавливающих торты заданной конструкции.</p>
+                <p>Входом программы являются:</p>
+                <ol>
+                  <li>набор из пяти четных чисел, в котором ненулевые числа задают диаметры слоев торта;</li>
+                  <li>набор из пяти чисел, задающий в процентах плотности слоев заданных диаметров.</li>
+                </ol>
+                <p>Выходом программы являются:</p>
+                <ol>
+                  <li>единая высота слоев;</li>
+                  <li>набор целых чисел, представляющих массу слоев заданных диаметров и плотности;</li>
+                  <li>показатель неиспользованной массы.</li>
+                </ol>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</template>
+<style>
+</style>
+<script>
+  return {
+    // Component Data
+    data: function () {
+      // Must return an object
+      return JSON.parse(window.localStorage.getItem('data')) || {
+        mass: 8000,
+        height: 3.27,
+        unused: 0,
+        slice: [
+          { id: 1, diam: 42, dens: 100, mass: 4536 },
+          { id: 2, diam: 32, dens: 100, mass: 2633 },
+          { id: 3, diam: 18, dens: 100, mass: 833 },
+        ],
+      }
+    },
+    // Component Methods
+    methods: {
+      update: function () {
+        var M = parseFloat(app.dataTable.get('#dt').$el.find('.mass').val());
+        this.mass = M;
+        var m = M;
+        var S = 0;
+        this.slice.forEach(function (s) {
+          s.dens = parseFloat(app.dataTable.get('#dt').$el.find('.row' + s.id + ' .dens').val()) || 100;
+          s.diam = parseFloat(app.dataTable.get('#dt').$el.find('.row' + s.id + ' .diam').val()) || 0;
+          S += parseInt((Math.PI * ((s.diam / 2) ** 2) * s.dens) / 100);
+        });
+        var H = (1.0 * M / S);
+        console.log(M, S, H);
+        this.slice.forEach(function (s) {
+          s.mass = parseInt((Math.PI * ((s.diam / 2) ** 2) * H * s.dens) / 100);
+          m -= s.mass;
+        });
+        this.height = H;
+        this.unused = m > 0 ? m : 0;
+        var { height, unused, slice, mass } = this;
+        window.localStorage.setItem('data', JSON.stringify({ height, unused, slice, mass }));
+        this.$update();
+      },
+      openAlert: function () {
+        var self = this;
+        self.$app.dialog.alert('Hello World');
+      },
+      deleteSlice: function (t) {
+        this.slice = this.slice.filter(x => x.id != t.path[4].id);
+        console.log(this.slice);
+        this.update();
+      },
+      addSlice: function () {
+        this.slice.push({ id: (this.slice[this.slice.length - 1] || { id: 0 }).id + 1, dens: 100, diam: 100, mass: 100 })
+        this.update();
+      },
+      deleteSelected: function () {
+        var self = this;
+        app.dataTable.get('#dt').$el.find('tbody .data-table-row-selected').each(function (i, t) {
+          self.slice = self.slice.filter(x => x.id != t.id);
+        });
+        this.update();
+      },
+
+    },
+
+  }
+</script>
